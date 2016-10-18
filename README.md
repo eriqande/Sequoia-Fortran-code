@@ -32,3 +32,38 @@ FC = /usr/local/gfortran/bin/gfortran
 F77 = /usr/local/gfortran/bin/gfortran
 FLIBS = -L/usr/local/gfortran/lib -lgfortran -lquadmath -lm
 ```
+After which I did like so:
+```sh
+R CMD SHLIB Sequoia_R.f90 --output=sequoia.so
+```
+which worked, but gave a few errors:
+```
+/usr/local/gfortran/bin/gfortran  -fPIC -Wall -g -O2  -c  Sequoia_R.f90 -o Sequoia_R.o
+Sequoia_R.f90:3093:65:
+
+ double precision :: LLA(2,7,7), dLL, TopLL, LLcp(3,2), LLINOUT(2), LLU(3), LLtmp(3), ALR(3)
+                                                                 1
+Warning: Unused variable ‘llinout’ declared at (1) [-Wunused-variable]
+Sequoia_R.f90:3623:71:
+
+ double precision :: LLtmp(2), ALR(7), LLx(6), LLz(2), LRHS, LLM(6), LUX, LLHA(3), &
+                                                                       1
+Warning: Unused variable ‘lux’ declared at (1) [-Wunused-variable]
+Sequoia_R.f90:6293:0:
+
+ integer :: x, y, z, gcat
+ 
+Warning: ‘gcat’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+Sequoia_R.f90:2472:0:
+
+                 do j=1,nB
+ 
+Warning: ‘nb’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+Sequoia_R.f90:1740:0:
+
+ integer :: l, x, y, curGP(2), m, z, AncB(2, mxA), v
+ 
+Warning: ‘m’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+/usr/local/gfortran/bin/gfortran -dynamiclib -Wl,-headerpad_max_install_names -undefined dynamic_lookup -single_module -multiply_defined suppress -L/Library/Frameworks/R.framework/Resources/lib -L/usr/local/lib -o sequoia.so Sequoia_R.o -F/Library/Frameworks/R.framework/.. -framework R -Wl,-framework -Wl,CoreFoundation
+```
+So, now I am going to see if I can swap that in for the lib in the package...
